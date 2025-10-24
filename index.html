@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arkanoid game</title>
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Germania+One">
     <style>
@@ -9,56 +10,286 @@
             font-family: "Germania One";
         }
         #sound{
-            width: 45px;
-            height : 45px;
+            width: clamp(30px, 4vw, 50px);
+            height: clamp(30px, 4vw, 50px);
             cursor: pointer;
             position: absolute;
-            top : 465px;
-            left : 15px;
+            bottom: 2%;
+            left: 2%;
+            z-index: 10;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 5px;
+            background: rgba(0, 255, 255, 0.1);
+        }
+        #sound:hover {
+            transform: scale(1.1);
+            background: rgba(0, 255, 255, 0.3);
+        }
+        #sound:active {
+            transform: scale(0.95);
         }
       
         #youwon{
-            width: 100px;
+            width: clamp(80px, 20vw, 150px);
             position: absolute;
-            top : 200px;
-            left : 150px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: none;
+            z-index: 20;
         }
         #youlose{
-            width:400px;
+            width: clamp(250px, 60vw, 500px);
             position: absolute;
-            top: 100px;
-            left : 0px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: none;
+            z-index: 20;
         }
         #restart{
-            position:absolute;
-            top: 470px;
-            left : 320px;
+            position: absolute;
+            bottom: 2%;
+            right: 2%;
             cursor: pointer;
-            font-size: 1.25em;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
             border-radius: 15px;
-            color : black;
+            color: black;
+            padding: 0.5em 1em;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        #pause-btn {
+            position: absolute;
+            bottom: 2%;
+            right: clamp(100px, 25vw, 150px);
+            cursor: pointer;
+            font-size: clamp(0.8rem, 2vw, 1.2rem);
+            border-radius: 15px;
+            color: black;
+            padding: 0.5em 1em;
+            white-space: nowrap;
+            z-index: 10;
         }
         #breakout{
             border-bottom-left-radius: 3%;
             border-bottom-right-radius: 3%;
         
         }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            padding: 0;
+        }
+        #game-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #breakout {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('img/bg2.jpg') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: #0ff;
+            z-index: 1000;
+        }
+        #loader {
+            width: clamp(40px, 10vw, 60px);
+            height: clamp(40px, 10vw, 60px);
+            border: clamp(3px, 1vw, 5px) solid #0ff;
+            border-top: clamp(3px, 1vw, 5px) solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #loading-text {
+            margin: 20px 0;
+            font-size: clamp(1.5rem, 5vw, 2rem);
+        }
+        #start-btn, #rules-btn {
+            margin: 10px;
+            padding: clamp(8px, 2vw, 15px) clamp(15px, 4vw, 25px);
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            background: #0ff;
+            color: black;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            white-space: nowrap;
+        }
+        #start-btn:hover, #rules-btn:hover {
+            background: #00ffff;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+        #start-btn:active, #rules-btn:active {
+            transform: scale(0.95);
+        }
+        #rules-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+        #rules-content {
+            background: url('img/bg2.jpg') no-repeat center center;
+            background-size: cover;
+            padding: clamp(15px, 4vw, 30px);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            text-align: center;
+            color: #0ff;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        #rules-content h2 {
+            margin-top: 0;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+        }
+        #rules-content p {
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            margin: 10px 0;
+        }
+        #close-rules {
+            margin-top: 20px;
+            padding: clamp(8px, 2vw, 12px) clamp(15px, 4vw, 25px);
+            background: #0ff;
+            color: black;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            white-space: nowrap;
+        }
+        #close-rules:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+        #restart, #pause-btn {
+            transition: all 0.3s ease;
+        }
+        #restart:hover, #pause-btn:hover {
+            transform: scale(1.1);
+            background: #0ff;
+        }
+        
+        /* Remove fixed pixel-based media query, use fluid responsive design */
+        @media (max-width: 768px) {
+            #sound {
+                width: clamp(25px, 5vw, 35px);
+                height: clamp(25px, 5vw, 35px);
+                padding: 4px;
+            }
+            #restart, #pause-btn {
+                font-size: clamp(0.75rem, 2vw, 1.1rem);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #sound {
+                width: clamp(22px, 6vw, 32px);
+                height: clamp(22px, 6vw, 32px);
+                padding: 3px;
+                bottom: 1.5%;
+                left: 1.5%;
+            }
+            #restart, #pause-btn {
+                font-size: clamp(0.7rem, 2.5vw, 1rem);
+                padding: 0.4em 0.7em;
+                bottom: 1.5%;
+            }
+            #pause-btn {
+                right: clamp(80px, 20vw, 120px);
+            }
+            #restart {
+                right: 1.5%;
+            }
+        }
+        
+        @media (orientation: landscape) and (max-height: 500px) {
+            #sound {
+                width: clamp(20px, 4vh, 30px);
+                height: clamp(20px, 4vh, 30px);
+                padding: 2px;
+            }
+            #restart, #pause-btn {
+                font-size: clamp(0.6rem, 2vh, 0.9rem);
+                padding: 0.3em 0.6em;
+            }
+        }
         
     </style>
 </head>
 <body>
     
-    <canvas id="breakout" width="400" height="500"></canvas>
-    <button id="restart" onclick="location.reload()">Restart</button>
-    <div class="sound">
-        <img src="img/SOUND_ON.png" alt="" id="sound">
+    <div id="loading">
+        <div id="loader"></div>
+        <div id="loading-text">Loading...</div>
+        <button id="start-btn" style="display: none;">Start Game</button>
+        <button id="rules-btn" style="display: none;">Game Rules</button>
     </div>
-    <div id="gameover">
-        <img src="img/youwon.png" alt="" id="youwon">
-        <img src="img/gameover.png" alt="" id="youlose">
-        
+    <div id="rules-modal" style="display: none;">
+        <div id="rules-content">
+            <h2>Game Rules</h2>
+            <p>Use arrow keys or touch to move the paddle.</p>
+            <p>Break all bricks to advance levels.</p>
+            <p>Don't let the ball fall!</p>
+            <button id="close-rules">Close</button>
+        </div>
+    </div>
+    <div id="game-container">
+        <canvas id="breakout"></canvas>
+        <button id="restart" onclick="location.reload()">Restart</button>
+        <button id="pause-btn">Pause</button>
+        <div class="sound">
+            <img src="img/SOUND_ON.png" alt="" id="sound">
+        </div>
+        <div id="gameover">
+            <img src="img/youwon.png" alt="" id="youwon">
+            <img src="img/gameover.png" alt="" id="youlose">
+            
+        </div>
     </div>
     <script src="items.js"></script>
     <script src="app.js"></script>
